@@ -1,0 +1,143 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyDataPlaneRead",
+      "Effect": "Deny",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectTorrent",
+        "dynamodb:GetItem",
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:PartiQLSelect",
+        "sqs:ReceiveMessage",
+        "kinesis:GetRecords",
+        "kinesis:GetShardIterator",
+        "logs:GetLogEvents",
+        "logs:FilterLogEvents",
+        "logs:StartQuery",
+        "logs:GetQueryResults",
+        "rds:DownloadDBLogFilePortion",
+        "rds:DownloadCompleteDBLogFile",
+        "codecommit:GetFile",
+        "codecommit:GetFolder",
+        "codecommit:GetBlob",
+        "codecommit:GitPull",
+        "ecr:BatchGetImage",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetAuthorizationToken",
+        "lambda:GetFunction",
+        "lambda:GetLayerVersion",
+        "macie2:GetSensitiveDataOccurrences",
+        "macie2:GetSensitiveDataOccurrencesAvailability"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenySecretsAndCryptoMaterial",
+      "Effect": "Deny",
+      "Action": [
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:BatchGetSecretValue",
+        "ssm:GetParameter",
+        "ssm:GetParameters",
+        "ssm:GetParameterHistory",
+        "ssm:GetParametersByPath",
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:ReEncryptFrom",
+        "kms:ReEncryptTo",
+        "kms:GenerateDataKey",
+        "kms:GenerateDataKeyWithoutPlaintext",
+        "kms:GenerateDataKeyPair",
+        "ec2:GetPasswordData",
+        "acm:GetCertificate",
+        "acm:ExportCertificate",
+        "codebuild:BatchGetProjects"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyAnyIdentityMutationAndChaining",
+      "Effect": "Deny",
+      "Action": [
+        "iam:Add*",
+        "iam:Attach*",
+        "iam:Change*",
+        "iam:Create*",
+        "iam:Deactivate*",
+        "iam:Delete*",
+        "iam:Detach*",
+        "iam:Enable*",
+        "iam:PassRole",
+        "iam:Put*",
+        "iam:Remove*",
+        "iam:Reset*",
+        "iam:Set*",
+        "iam:Tag*",
+        "iam:Untag*",
+        "iam:Update*",
+        "iam:Upload*",
+        "sts:AssumeRole",
+        "sts:AssumeRoleWithSAML",
+        "sts:AssumeRoleWithWebIdentity",
+        "sts:GetFederationToken",
+        "organizations:Leave*",
+        "organizations:Move*",
+        "organizations:Remove*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyWithoutRecentMFA",
+      "Effect": "Deny",
+      "NotAction": [
+        "sts:GetCallerIdentity",
+        "iam:GetUser",
+        "iam:ListMFADevices"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    },
+    {
+      "Sid": "DenyOutsideApprovedRegions",
+      "Effect": "Deny",
+      "NotAction": [
+        "iam:*",
+        "sts:*",
+        "organizations:*",
+        "access-analyzer:*",
+        "cloudfront:*",
+        "route53:*",
+        "route53domains:*",
+        "waf:*",
+        "shield:*",
+        "globalaccelerator:*",
+        "support:*",
+        "trustedadvisor:*",
+        "health:*",
+        "budgets:*",
+        "ce:*",
+        "cur:*",
+        "s3:ListAllMyBuckets",
+        "s3:GetAccountPublicAccessBlock"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": [
+            "ap-southeast-1",
+            "us-east-1"
+          ]
+        }
+      }
+    }
+  ]
+}

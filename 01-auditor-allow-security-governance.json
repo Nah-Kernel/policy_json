@@ -1,0 +1,113 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "IdentityAndAccessInventory",
+      "Effect": "Allow",
+      "Action": [
+        "iam:Get*",
+        "iam:List*",
+        "iam:GenerateCredentialReport",
+        "iam:GenerateServiceLastAccessedDetails",
+        "iam:GenerateOrganizationsAccessReport",
+        "iam:SimulateCustomPolicy",
+        "iam:SimulatePrincipalPolicy",
+        "access-analyzer:Get*",
+        "access-analyzer:List*",
+        "access-analyzer:ValidatePolicy",
+        "access-analyzer:CheckAccessNotGranted",
+        "access-analyzer:CheckNoNewAccess",
+        "organizations:Describe*",
+        "organizations:List*",
+        "sso:Describe*",
+        "sso:Get*",
+        "sso:List*",
+        "identitystore:Describe*",
+        "identitystore:List*",
+        "sts:GetCallerIdentity"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SecurityAndComplianceServices",
+      "Effect": "Allow",
+      "Action": [
+        "cloudtrail:Describe*",
+        "cloudtrail:Get*",
+        "cloudtrail:List*",
+        "cloudtrail:LookupEvents",
+        "config:Describe*",
+        "config:Get*",
+        "config:List*",
+        "config:Select*",
+        "config:BatchGetResourceConfig",
+        "guardduty:Describe*",
+        "guardduty:Get*",
+        "guardduty:List*",
+        "securityhub:Describe*",
+        "securityhub:Get*",
+        "securityhub:List*",
+        "securityhub:BatchGetStandardsControlAssociations",
+        "inspector2:BatchGet*",
+        "inspector2:Describe*",
+        "inspector2:Get*",
+        "inspector2:List*",
+        "macie2:Describe*",
+        "macie2:Get*",
+        "macie2:List*",
+        "detective:Describe*",
+        "detective:Get*",
+        "detective:List*",
+        "audit-manager:Get*",
+        "audit-manager:List*",
+        "wellarchitected:Get*",
+        "wellarchitected:List*",
+        "health:Describe*",
+        "support:DescribeTrustedAdvisorCheckResult",
+        "support:DescribeTrustedAdvisorChecks",
+        "trustedadvisor:Describe*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CryptoAndSecretMetadataOnly",
+      "Effect": "Allow",
+      "Action": [
+        "kms:DescribeKey",
+        "kms:GetKeyPolicy",
+        "kms:GetKeyRotationStatus",
+        "kms:GetPublicKey",
+        "kms:List*",
+        "acm:Describe*",
+        "acm:List*",
+        "acm-pca:Describe*",
+        "acm-pca:List*",
+        "acm-pca:GetPolicy",
+        "cloudhsm:Describe*",
+        "cloudhsm:List*",
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:ListSecrets",
+        "secretsmanager:ListSecretVersionIds",
+        "secretsmanager:GetResourcePolicy"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "BillingAndResourceInventory",
+      "Effect": "Allow",
+      "Action": [
+        "ce:Describe*",
+        "ce:Get*",
+        "ce:List*",
+        "budgets:Describe*",
+        "budgets:View*",
+        "cur:Describe*",
+        "tag:Get*",
+        "resource-explorer-2:Get*",
+        "resource-explorer-2:List*",
+        "resource-explorer-2:Search"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
