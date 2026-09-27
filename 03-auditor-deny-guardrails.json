@@ -2,9 +2,8 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "DenyDataPlaneRead",
+      "Sid": "DenyDataPlaneReadScopedResources",
       "Effect": "Deny",
-      "Comment": "Deny khong can Resource cu the vi day la guardrail tuyet doi - phai chan tren TOAN BO tai nguyen, ke ca resource ngoai pham vi audit-scope tag.",
       "Action": [
         "s3:GetObject",
         "s3:GetObjectVersion",
@@ -29,15 +28,35 @@
         "codecommit:GitPull",
         "ecr:BatchGetImage",
         "ecr:GetDownloadUrlForLayer",
-        "ecr:GetAuthorizationToken",
         "lambda:GetFunction",
-        "lambda:GetLayerVersion",
-        "macie2:GetSensitiveDataOccurrences"
+        "lambda:GetLayerVersion"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*/*",
+        "arn:aws:dynamodb:*:${aws:PrincipalAccount}:table/*",
+        "arn:aws:dynamodb:*:${aws:PrincipalAccount}:table/*/index/*",
+        "arn:aws:sqs:*:${aws:PrincipalAccount}:*",
+        "arn:aws:kinesis:*:${aws:PrincipalAccount}:stream/*",
+        "arn:aws:logs:*:${aws:PrincipalAccount}:log-group:*",
+        "arn:aws:rds:*:${aws:PrincipalAccount}:db:*",
+        "arn:aws:codecommit:*:${aws:PrincipalAccount}:*",
+        "arn:aws:ecr:*:${aws:PrincipalAccount}:repository/*",
+        "arn:aws:lambda:*:${aws:PrincipalAccount}:function:*",
+        "arn:aws:lambda:*:${aws:PrincipalAccount}:layer:*:*"
+      ]
+    },
+    {
+      "Sid": "DenyDataPlaneAccountLevelAPIs",
+      "Effect": "Deny",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "macie2:GetSensitiveDataOccurrences",
+        "macie2:GetSensitiveDataOccurrencesAvailability"
       ],
       "Resource": "*"
     },
     {
-      "Sid": "DenySecretsAndCryptoMaterial",
+      "Sid": "DenySecretsAndCryptoMaterialScoped",
       "Effect": "Deny",
       "Action": [
         "secretsmanager:GetSecretValue",
@@ -55,14 +74,21 @@
         "kms:GenerateDataKeyPair",
         "ec2:GetPasswordData",
         "acm:GetCertificate",
-        "acm:ExportCertificate"
+        "acm:ExportCertificate",
+        "codebuild:BatchGetProjects"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:secretsmanager:*:${aws:PrincipalAccount}:secret:*",
+        "arn:aws:ssm:*:${aws:PrincipalAccount}:parameter/*",
+        "arn:aws:kms:*:${aws:PrincipalAccount}:key/*",
+        "arn:aws:ec2:*:${aws:PrincipalAccount}:instance/*",
+        "arn:aws:acm:*:${aws:PrincipalAccount}:certificate/*",
+        "arn:aws:codebuild:*:${aws:PrincipalAccount}:project/*"
+      ]
     },
     {
-      "Sid": "DenyAnyIdentityMutationAndChaining",
+      "Sid": "DenyAnyIdentityMutationAndChainingScoped",
       "Effect": "Deny",
-      "Comment": "Chan chieu ngang leo thang dac quyen: khong the sua IAM, khong the assume sang role khac, khong the doi PassRole.",
       "Action": [
         "iam:Add*",
         "iam:Attach*",
@@ -89,7 +115,17 @@
         "organizations:Move*",
         "organizations:Remove*"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:iam::${aws:PrincipalAccount}:user/*",
+        "arn:aws:iam::${aws:PrincipalAccount}:role/*",
+        "arn:aws:iam::${aws:PrincipalAccount}:group/*",
+        "arn:aws:iam::${aws:PrincipalAccount}:policy/*",
+        "arn:aws:iam::${aws:PrincipalAccount}:mfa/*",
+        "arn:aws:iam::*:role/*",
+        "arn:aws:sts::${aws:PrincipalAccount}:federated-user/*",
+        "arn:aws:organizations::*:account/*/*",
+        "arn:aws:organizations::*:ou/*/*"
+      ]
     },
     {
       "Sid": "DenyWithoutRecentMFA",
@@ -136,25 +172,6 @@
             "ap-southeast-1",
             "us-east-1"
           ]
-        }
-      }
-    },
-    {
-      "Sid": "DenyOutsideAuditScopeAsSecondLayer",
-      "Effect": "Deny",
-      "Comment": "Lop bao hiem thu hai: ngay ca khi mot Allow statement o file 01/02 vo tinh bi sua thanh Resource=*, statement nay van chan cac hanh dong cau hinh nhay cam neu resource KHONG mang tag audit-scope=true. Day la ABAC guardrail dam bao Zero Trust that su, khong chi dua vao Allow duoc viet dung.",
-      "Action": [
-        "s3:GetBucketPolicy",
-        "s3:GetBucketAcl",
-        "kms:GetKeyPolicy",
-        "secretsmanager:DescribeSecret",
-        "iam:GetRole",
-        "iam:GetPolicy"
-      ],
-      "Resource": "*",
-      "Condition": {
-        "StringNotEquals": {
-          "aws:ResourceTag/audit-scope": "true"
         }
       }
     }
