@@ -5,7 +5,7 @@
       "Sid": "AllowAuditorsFromSecurityAccountWithMFA",
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::111122223333:root"
+        "AWS": "arn:aws:iam::111122223333:role/SecurityAuditorEntryRole"
       },
       "Action": "sts:AssumeRole",
       "Condition": {
@@ -16,8 +16,9 @@
           "aws:MultiFactorAuthAge": "3600"
         },
         "StringEquals": {
-          "sts:ExternalId": "REPLACE-WITH-RANDOM-GUID",
-          "aws:PrincipalOrgID": "o-xxxxxxxxxx"
+          "sts:ExternalId": "audit-ext-9f8e7d6c-5b4a-3210",
+          "aws:PrincipalOrgID": "o-sec1234567",
+          "aws:ResourceAccount": "123456789012"
         },
         "ArnLike": {
           "aws:PrincipalArn": "arn:aws:iam::111122223333:role/SecurityAuditorEntry*"
@@ -31,3 +32,4 @@
     }
   ]
 }
+
