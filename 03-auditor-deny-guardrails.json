@@ -4,6 +4,7 @@
     {
       "Sid": "DenyDataPlaneRead",
       "Effect": "Deny",
+      "Comment": "Deny khong can Resource cu the vi day la guardrail tuyet doi - phai chan tren TOAN BO tai nguyen, ke ca resource ngoai pham vi audit-scope tag.",
       "Action": [
         "s3:GetObject",
         "s3:GetObjectVersion",
@@ -31,8 +32,7 @@
         "ecr:GetAuthorizationToken",
         "lambda:GetFunction",
         "lambda:GetLayerVersion",
-        "macie2:GetSensitiveDataOccurrences",
-        "macie2:GetSensitiveDataOccurrencesAvailability"
+        "macie2:GetSensitiveDataOccurrences"
       ],
       "Resource": "*"
     },
@@ -55,14 +55,14 @@
         "kms:GenerateDataKeyPair",
         "ec2:GetPasswordData",
         "acm:GetCertificate",
-        "acm:ExportCertificate",
-        "codebuild:BatchGetProjects"
+        "acm:ExportCertificate"
       ],
       "Resource": "*"
     },
     {
       "Sid": "DenyAnyIdentityMutationAndChaining",
       "Effect": "Deny",
+      "Comment": "Chan chieu ngang leo thang dac quyen: khong the sua IAM, khong the assume sang role khac, khong the doi PassRole.",
       "Action": [
         "iam:Add*",
         "iam:Attach*",
@@ -136,6 +136,25 @@
             "ap-southeast-1",
             "us-east-1"
           ]
+        }
+      }
+    },
+    {
+      "Sid": "DenyOutsideAuditScopeAsSecondLayer",
+      "Effect": "Deny",
+      "Comment": "Lop bao hiem thu hai: ngay ca khi mot Allow statement o file 01/02 vo tinh bi sua thanh Resource=*, statement nay van chan cac hanh dong cau hinh nhay cam neu resource KHONG mang tag audit-scope=true. Day la ABAC guardrail dam bao Zero Trust that su, khong chi dua vao Allow duoc viet dung.",
+      "Action": [
+        "s3:GetBucketPolicy",
+        "s3:GetBucketAcl",
+        "kms:GetKeyPolicy",
+        "secretsmanager:DescribeSecret",
+        "iam:GetRole",
+        "iam:GetPolicy"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:ResourceTag/audit-scope": "true"
         }
       }
     }
